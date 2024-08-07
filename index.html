@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hexacolonist</title>
+    <meta name="description" content="Hexacolonist is a bot programming game that is played on a hexagonal grid. Players write code to control their bots and build an exoplanet colony." />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+  </head>
+  <body>
+    <div id="app">
+      <h1>Hexacolonist</h1>
+      <p>Loading...</p>
+      <noscript>
+        <p>Hexacolonist requires JavaScript to run. Please enable JavaScript in your browser.</p>
+      </noscript>
+    </div>
+    <div
+      id="pwa-toast"
+      role="alert"
+      aria-labelledby="toast-message"
+    >
+      <div class="message">
+        <span id="toast-message"></span>
+      </div>
+      <div class="buttons">
+          <button id="pwa-refresh" type="button">
+            Reload
+          </button>
+          <button id="pwa-close" type="button">
+            Close
+          </button>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "hexacolonist",
+  "version": "0.1.0",
+  "description": "Bot programming game",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@vite-pwa/assets-generator": "^0.2.4",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.10",
+    "vite-plugin-pwa": "^0.20.0",
+    "workbox-window": "^7.1.0"
+  },  
+  "keywords": [
+    "wasm",
+    "webassembly",
+    "offline"
+  ],
+  "homepage": "https://hexacolonist.github.io",
+  "repository": "github:hexacolonist/hexacolonist.github.io",
+  "bugs": {
+    "url": "https://github.com/hexacolonist/hexacolonist.github.io/issues"
+  },
+  "author": "ShuP1",
+  "license": "MIT"
+}
