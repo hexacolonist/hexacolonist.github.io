@@ -1,9 +1,12 @@
-import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vite'
+import glsl from 'vite-plugin-glsl'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [VitePWA({
+  plugins: [glsl({
+    compress: true
+  }), VitePWA({
     registerType: 'prompt',
     injectRegister: false,
 
@@ -39,7 +42,7 @@ export default defineConfig({
     },
 
     workbox: {
-      globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+      globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
       cleanupOutdatedCaches: true,
       clientsClaim: true,
     },

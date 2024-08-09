@@ -7,32 +7,36 @@
     <meta name="description" content="Hexacolonist is a bot programming game that is played on a hexagonal grid. Players write code to control their bots and build an exoplanet colony." />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" href="/src/style.sass">
   </head>
   <body>
-    <div id="app">
+    <div id="loading">
       <h1>Hexacolonist</h1>
+      <img src="/favicon.svg" class="logo" alt="Logo" height="144px" />
       <p>Loading...</p>
       <noscript>
-        <p>Hexacolonist requires JavaScript to run. Please enable JavaScript in your browser.</p>
+        <p class="error">Hexacolonist requires JavaScript to run. Please enable JavaScript in your browser.</p>
       </noscript>
     </div>
+    <canvas id="canvas"></canvas>
+    <div id="overlay"></div>
     <div
-      id="pwa-toast"
+      id="alert"
       role="alert"
-      aria-labelledby="toast-message"
+      aria-labelledby="alert-message"
     >
       <div class="message">
-        <span id="toast-message"></span>
+        <span id="alert-message"></span>
       </div>
       <div class="buttons">
-          <button id="pwa-refresh" type="button">
+          <button id="alert-refresh" type="button">
             Reload
           </button>
-          <button id="pwa-close" type="button">
+          <button id="alert-close" type="button">
             Close
           </button>
       </div>
     </div>
-    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/main.ts" async></script>
   </body>
 </html>
