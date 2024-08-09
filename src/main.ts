@@ -6,7 +6,7 @@ setTimeout(() => {
 
   const view: RenderState = {
     offset: [0, 0],
-    scale: [100, 100],
+    scale: [100, 100]
   }
   const speed = 20
   render(document.querySelector<HTMLCanvasElement>('#canvas')!, view)

@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hexacolonist</title>
-    <meta name="description" content="Hexacolonist is a bot programming game that is played on a hexagonal grid. Players write code to control their bots and build an exoplanet colony." />
+    <meta
+      name="description"
+      content="Hexacolonist is a bot programming game that is played on a hexagonal grid. Players write code to control their bots and build an exoplanet colony."
+    />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="stylesheet" href="/src/style.sass">
+    <link rel="stylesheet" href="/src/style.sass" />
   </head>
   <body>
     <div id="loading">
@@ -20,21 +23,13 @@
     </div>
     <canvas id="canvas"></canvas>
     <div id="overlay"></div>
-    <div
-      id="alert"
-      role="alert"
-      aria-labelledby="alert-message"
-    >
+    <div id="alert" role="alert" aria-labelledby="alert-message">
       <div class="message">
         <span id="alert-message"></span>
       </div>
       <div class="buttons">
-          <button id="alert-refresh" type="button">
-            Reload
-          </button>
-          <button id="alert-close" type="button">
-            Close
-          </button>
+        <button id="alert-refresh" type="button">Reload</button>
+        <button id="alert-close" type="button">Close</button>
       </div>
     </div>
     <script type="module" src="/src/main.ts" async></script>

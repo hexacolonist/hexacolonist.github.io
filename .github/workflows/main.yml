@@ -19,6 +19,8 @@ jobs:
         run: pnpm install
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+      - name: Test
+        run: pnpm test
       - name: Build
         run: pnpm build --base=https://${{ github.repository_owner }}.github.io/
       - name: Redirect 404 to Index for SPA
