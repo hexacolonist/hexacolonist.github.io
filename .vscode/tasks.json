@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "dev",
+      "label": "npm: dev",
+      "detail": "Start vite dev server",
+      "isBackground": true,
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "label": "npm: build",
+      "detail": "Build for production",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "label": "npm: test",
+      "detail": "Run all tests",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    }
+  ]
+}
