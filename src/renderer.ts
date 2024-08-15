@@ -1,5 +1,7 @@
 import passthroughVertexShader from './glsl/passthrough.vs'
 import hexFragmentShader from './glsl/hex.fs'
+import objectVertexShader from './glsl/object.vs'
+import objectFragmentShader from './glsl/object.fs'
 
 export interface RenderState {
   /** pixel */
@@ -10,8 +12,18 @@ export interface RenderState {
   radius: number
   /** radian */
   angle: number
+  objects: RenderObject[]
   running: boolean
 }
+interface RenderObject {
+  /** not pixel */
+  x: number
+  /** not pixel */
+  y: number
+  color: vec3
+  angle: number
+}
+
 export default function render(
   canvas: HTMLCanvasElement,
   state: RenderState,
@@ -20,18 +32,43 @@ export default function render(
   const gl = canvas.getContext('webgl2')!
   if (!gl) throw new Error('webgl2 not supported')
 
-  const program = compileProgram(gl, passthroughVertexShader, hexFragmentShader)
-  gl.useProgram(program)
+  const drawGrid = (() => {
+    const program = compileProgram(gl, passthroughVertexShader, hexFragmentShader)
+    const setTransform = getUniformSetter<Mat3>(gl, program, 'transform', Mat3.Length)
+    const usePosBuffer = getAttributeSetter(gl, createBuffer(gl, [-1, 3, -1, -1, 3, -1]))
 
-  const triangleBuffer = gl.createBuffer()
-  gl.bindBuffer(gl.ARRAY_BUFFER, triangleBuffer)
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, 3, -1, -1, 3, -1]), gl.STATIC_DRAW)
-  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0)
-  gl.enableVertexAttribArray(0)
+    return (transform: Mat3) => {
+      gl.useProgram(program)
+      setTransform(transform)
+      usePosBuffer()
+      gl.drawArrays(gl.TRIANGLES, 0, 3)
+    }
+  })()
 
-  const transformLoc = gl.getUniformLocation(program, 'transform')!
+  const drawObjects = (() => {
+    const program = compileProgram(gl, objectVertexShader, objectFragmentShader)
+    const setTransform = getUniformSetter<Mat3>(gl, program, 'transform', 9)
+    const setColor = getUniformSetter<vec4>(gl, program, 'color', 4)
+    const S3O2 = Math.sqrt(3) / 2
+    const usePosBuffer = getAttributeSetter(
+      gl,
+      createBuffer(gl, [0, 1, S3O2, 0.5, -S3O2, 0.5, S3O2, -0.5, -S3O2, -0.5, 0, -1])
+    )
+
+    return (cb: (draw: (transform: Mat3, color: vec4) => void) => void) => {
+      gl.useProgram(program)
+      usePosBuffer()
+
+      cb((transform, color) => {
+        setTransform(transform)
+        setColor(color)
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 6)
+      })
+    }
+  })()
 
   let lastTime = 0
+  /** Hot render loop. Should allocate as lite as possible */
   function loop(time: number) {
     if (!state.running) return
 
@@ -42,26 +79,78 @@ export default function render(
     if (resizeCanvasToPixel(canvas)) {
       gl.viewport(0, 0, canvas.width, canvas.height)
     }
-    const scale = (2 + 3 * (state.radius || 0)) / Math.min(canvas.width, canvas.height)
-    gl.uniformMatrix3fv(
-      transformLoc,
-      false,
-      Mat3.translate(state.x - canvas.width / 2, state.y - canvas.height / 2)
-        .multiply(Mat3.scale(scale, scale))
-        .multiply(Mat3.rotate(state.angle))
-    )
 
     gl.clearColor(0, 0, 0, 1)
-    gl.clear(gl.COLOR_BUFFER_BIT)
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-    gl.drawArrays(gl.TRIANGLES, 0, 3)
+    const min = Math.min(canvas.width, canvas.height)
+    const scale = 2 + 3 * (state.radius || 0)
+    drawGrid(
+      new Mat3()
+        .identity()
+        .translate(state.x - canvas.width / 2, state.y - canvas.height / 2)
+        .scale(scale / min)
+        .rotate(state.angle)
+    )
+
+    drawObjects((add) => {
+      const m = new Mat3()
+      const c: vec4 = [0, 0, 0, 1]
+      for (const { x, y, angle, color } of state.objects) {
+        c[0] = color[0]
+        c[1] = color[1]
+        c[2] = color[2]
+        m.identity()
+          .rotate(angle)
+          .translate(x, y)
+          .rotate(-state.angle)
+          .scale(min / canvas.width / scale, min / canvas.height / scale)
+          .translate(-state.x / (canvas.width / 2), -state.y / (canvas.height / 2))
+        add(m, c)
+      }
+    })
 
     window.requestAnimationFrame(loop)
   }
   window.requestAnimationFrame(loop)
 }
 
-function compileProgram(gl: WebGL2RenderingContext, vertexShader: string, fragmentShader: string) {
+function createBuffer(gl: WebGLRenderingContext, data: Iterable<number>) {
+  const buffer = gl.createBuffer()!
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW)
+  return buffer
+}
+function getAttributeSetter(gl: WebGLRenderingContext, buffer: WebGLBuffer) {
+  return () => {
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+    gl.enableVertexAttribArray(0)
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0)
+  }
+}
+
+function getUniformSetter<T extends Float32List>(
+  gl: WebGLRenderingContext,
+  program: WebGLProgram,
+  name: string,
+  size: number
+) {
+  gl.useProgram(program)
+  const location = gl.getUniformLocation(program, name)
+  if (!location) throw new Error(`uniform ${name} not found`)
+  const uniformNf: ((t: T) => void) | undefined = {
+    1: (t: T) => gl.uniform1f(location, t[0]),
+    2: (t: T) => gl.uniform2f(location, ...(t as vec2)),
+    3: (t: T) => gl.uniform3f(location, ...(t as vec3)),
+    4: (t: T) => gl.uniform4f(location, ...(t as vec4)),
+    9: gl.uniformMatrix3fv.bind(gl, location, false),
+    16: gl.uniformMatrix4fv.bind(gl, location, false)
+  }[size]
+  if (!uniformNf) throw new Error(`unsupported uniform size: ${size}`)
+  return uniformNf
+}
+
+function compileProgram(gl: WebGLRenderingContext, vertexShader: string, fragmentShader: string) {
   const vs = compileShader(gl, gl.VERTEX_SHADER, vertexShader)
   const fs = compileShader(gl, gl.FRAGMENT_SHADER, fragmentShader)
 
@@ -79,7 +168,7 @@ function compileProgram(gl: WebGL2RenderingContext, vertexShader: string, fragme
   throw new Error(error ?? 'failed to link program')
 }
 
-function compileShader(gl: WebGL2RenderingContext, type: GLenum, source: string) {
+function compileShader(gl: WebGLRenderingContext, type: GLenum, source: string) {
   const shader = gl.createShader(type)!
   gl.shaderSource(shader, source)
   gl.compileShader(shader)
@@ -102,36 +191,34 @@ function resizeCanvasToPixel(c: HTMLCanvasElement, multiplier = window.devicePix
   return false
 }
 
+type vec2 = [number, number]
+type vec3 = [number, number, number]
+type vec4 = [number, number, number, number]
+
 class Mat3 extends Float32Array {
+  static readonly Length = 9
+
   constructor() {
     super(9)
     this.fill(0)
+  }
+  identity() {
+    this.fill(0)
     this[0] = this[4] = this[8] = 1
+    return this
   }
-  static scale(x: number, y: number) {
-    const m = new Mat3()
-    m[0] = x
-    m[4] = y
-    return m
-  }
-  static translate(x: number, y: number) {
-    const m = new Mat3()
-    m[6] = x
-    m[7] = y
-    return m
-  }
-  static rotate(rad: number) {
-    const c = Math.cos(rad)
-    const s = Math.sin(rad)
 
-    const m = new Mat3()
-    m[0] = c
-    m[1] = s
-    m[3] = -s
-    m[4] = c
-    return m
-  }
-  multiply(m: Mat3) {
+  multiply(
+    b00: number,
+    b01: number,
+    b02: number,
+    b10: number,
+    b11: number,
+    b12: number,
+    b20: number,
+    b21: number,
+    b22: number
+  ) {
     const a00 = this[0],
       a01 = this[1],
       a02 = this[2]
@@ -141,16 +228,6 @@ class Mat3 extends Float32Array {
     const a20 = this[6],
       a21 = this[7],
       a22 = this[8]
-
-    const b00 = m[0],
-      b01 = m[1],
-      b02 = m[2]
-    const b10 = m[3],
-      b11 = m[4],
-      b12 = m[5]
-    const b20 = m[6],
-      b21 = m[7],
-      b22 = m[8]
 
     this[0] = a00 * b00 + a01 * b10 + a02 * b20
     this[1] = a00 * b01 + a01 * b11 + a02 * b21
@@ -163,4 +240,30 @@ class Mat3 extends Float32Array {
     this[8] = a20 * b02 + a21 * b12 + a22 * b22
     return this
   }
+
+  scale(n: number): Mat3
+  scale(x: number, y: number): Mat3
+  scale(x: number, y?: number) {
+    return this.multiply(x, 0, 0, 0, y ?? x, 0, 0, 0, 1)
+  }
+  translate(x: number, y: number) {
+    return this.multiply(1, 0, 0, 0, 1, 0, x, y, 1)
+  }
+  rotate(rad: number) {
+    const c = Math.cos(rad)
+    const s = Math.sin(rad)
+    return this.multiply(c, s, 0, -s, c, 0, 0, 0, 1)
+  }
 }
+
+/*function fastMap<T, U>(array: T[], factory: (i: number) => U, apply: (value: T, to: U) => void, cache: U[]) {
+  let i = cache.length
+  cache.length = array.length
+  for (; i < array.length; i++) {
+    cache[i] = factory(i)
+  }
+  for (let i = 0; i < array.length; i++) {
+    apply(array[i], cache[i])
+  }
+  return cache
+}*/

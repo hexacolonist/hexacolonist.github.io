@@ -1,5 +1,5 @@
 import { initPWA } from './pwa.ts'
-import render, { RenderState } from './renderer.ts'
+import render, { RenderState } from './renderer'
 
 enum Angle {
   Right = 0,
@@ -31,6 +31,14 @@ setTimeout(() => {
     y: 0,
     radius: 5,
     angle: Angle.UpRight,
+    objects: [
+      {
+        x: 0,
+        y: 0,
+        color: [1, 1, 1],
+        angle: Angle.UpRight
+      }
+    ],
     running: true
   }
   /** pixel / ms */
@@ -76,6 +84,7 @@ setTimeout(() => {
     if (e.deltaMode) speed *= 10
     if (e.altKey) speed *= 10
 
+    //TODO: rotate around mouse or at least center
     view.radius += e.deltaY * speed * 0.01
     view.radius = Math.max(0, view.radius)
 
