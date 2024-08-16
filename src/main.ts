@@ -1,5 +1,6 @@
 import { initPWA } from './pwa.ts'
 import render, { RenderState } from './renderer'
+import editor from './editor.ts'
 
 enum Angle {
   Right = 0,
@@ -62,7 +63,7 @@ setTimeout(() => {
     }
   }
 
-  const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!
+  const canvas = document.getElementById('canvas') as HTMLCanvasElement
   render(canvas, view, update)
 
   const body = document.body
@@ -91,7 +92,12 @@ setTimeout(() => {
     view.angle += e.deltaX * speed * 0.001
   })
 
-  const loading = document.querySelector<HTMLDivElement>('#loading')!
+  setTimeout(() => {
+    //TODO: add loading screen
+    editor(document.getElementById('editor')!).catch(console.error)
+  }, 1000)
+
+  const loading = document.getElementById('loading')!
   loading.classList.add('hiding')
   setTimeout(() => loading.remove(), 5000)
 })

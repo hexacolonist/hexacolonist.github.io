@@ -22,7 +22,7 @@ jobs:
       - name: Test
         run: pnpm test
       - name: Build
-        run: pnpm build --base=https://${{ github.repository_owner }}.github.io/
+        run: pnpm build
       - name: Redirect 404 to Index for SPA
         run: cp dist/index.html dist/404.html
       - name: Upload Artifact

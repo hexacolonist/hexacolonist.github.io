@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import glsl from 'vite-plugin-glsl'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
@@ -7,6 +8,9 @@ export default defineConfig({
   plugins: [
     glsl({
       compress: true
+    }),
+    viteStaticCopy({
+      targets: [{ src: 'node_modules/monaco-editor/min/vs', dest: '' }]
     }),
     VitePWA({
       registerType: 'prompt',
@@ -41,7 +45,9 @@ export default defineConfig({
       },
 
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2,ttf}'],
+        globIgnores: ['**/vs/language/**'],
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         cleanupOutdatedCaches: true,
         clientsClaim: true
       },
