@@ -17,7 +17,10 @@
   "devDependencies": {
     "@monaco-editor/loader": "^1.4.0",
     "@vite-pwa/assets-generator": "^0.2.4",
+    "assemblyscript": "^0.27.29",
+    "binaryen": "116.0.0-nightly.20240114",
     "eslint": "^9.8.0",
+    "long": "5.2.3",
     "monaco-editor": "^0.50.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.3.3",

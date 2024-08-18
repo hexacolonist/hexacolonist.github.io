@@ -16,7 +16,7 @@
     <div id="loading">
       <h1>Hexacolonist</h1>
       <img src="/favicon.svg" class="logo" alt="Logo" height="144px" />
-      <p>Loading...</p>
+      <p class="loader">Loading</p>
       <noscript>
         <p class="error">Hexacolonist requires JavaScript to run. Please enable JavaScript in your browser.</p>
       </noscript>
@@ -25,7 +25,19 @@
       <canvas id="canvas"></canvas>
       <div id="overlay"></div>
     </div>
-    <div id="editor"></div>
+    <div id="resize-handle"></div>
+    <div id="editor">
+      <div class="loader">Loading</div>
+      <div class="toolbar">
+        <select id="editor-language" title="Language">
+          <option value="typescript">AssemblyScript</option>
+          <option value="cpp" selected>C++</option>
+          <option value="rust">Rust</option>
+          <option value="wat">WebAssembly Text</option>
+          <option value="wasm">WebAssembly</option>
+        </select>
+      </div>
+    </div>
     <div id="alert" role="alert" aria-labelledby="alert-message">
       <div class="message">
         <span id="alert-message"></span>
@@ -35,6 +47,16 @@
         <button id="alert-close" type="button">Close</button>
       </div>
     </div>
+    <script type="importmap">
+      {
+        "imports": {
+          "assemblyscript": "/asc/assemblyscript.js",
+          "assemblyscript/asc": "/asc/asc.js",
+          "binaryen": "/asc/binaryen.js",
+          "long": "/asc/long.js"
+        }
+      }
+    </script>
     <script type="module" src="/src/main.ts" async></script>
   </body>
 </html>

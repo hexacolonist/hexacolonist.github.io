@@ -1,6 +1,6 @@
 import { initPWA } from './pwa.ts'
 import render, { RenderState } from './renderer'
-import editor from './editor.ts'
+import edit from './editor'
 
 enum Angle {
   Right = 0,
@@ -92,10 +92,35 @@ setTimeout(() => {
     view.angle += e.deltaX * speed * 0.001
   })
 
-  setTimeout(() => {
-    //TODO: add loading screen
-    editor(document.getElementById('editor')!).catch(console.error)
-  }, 1000)
+  const editorHandle = document.getElementById('resize-handle')!
+  const editor = document.getElementById('editor')!
+  let editing = false
+  editorHandle.addEventListener('mousedown', (e) => {
+    e.preventDefault()
+    if (!editing) {
+      editing = true
+      editor.classList.add('loading')
+      edit(editor)
+        .catch(console.error)
+        .finally(() => editor.classList.remove('loading'))
+      return
+    }
+    const offset = editor.offsetWidth + e.clientX
+    const onMouseMove = (e: MouseEvent) => {
+      let width = offset - e.clientX
+      if (width < 10) width = 0
+      editor.style.width = `${width}px`
+    }
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+    }
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+  })
+  editorHandle.addEventListener('dblclick', () => {
+    editor.style.width = editor.style.width === '0px' ? '50%' : '0px'
+  })
 
   const loading = document.getElementById('loading')!
   loading.classList.add('hiding')

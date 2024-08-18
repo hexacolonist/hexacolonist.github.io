@@ -4,7 +4,7 @@
   font-weight: 400
 
   color-scheme: light dark
-  color: rgba(255, 255, 255, 0.87)
+  color: rgba(255, 255, 255, 0.9)
   background-color: #333333
 
   font-synthesis: none
@@ -40,14 +40,33 @@ body
   height: 100%
   z-index: 1
 
+#resize-handle
+  width: 2px
+  border-right: 2px solid #1e1e1e
+  background-color: #252526
+  cursor: ew-resize
+
 #editor
-  min-width: 0px
-  max-width: 50vw
-  transition: max-width .5s
+  background-color: #1e1e1e
+  display: flex
+  flex-direction: column
   & > div
     min-width: 30vw
-  &.closed
-    max-width: 0px
+  .loader
+    margin: 0
+    height: 100%
+    text-align: center
+    padding: 1rem
+    display: none
+  &.loading .loader
+    display: block
+  .toolbar
+    & > div
+      background-color: #252526
+    &:last-child
+      display: none
+  .container
+    flex-grow: 1
 
 h1
   font-size: 3.2em
@@ -132,3 +151,9 @@ button#alert-refresh
   display: none
 #alert.show.refresh button#alert-refresh
   display: block
+
+.loader::before
+  content: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><style>.spinner_jCIR{animation:spinner_B8Vq .9s linear infinite;animation-delay:-.9s}.spinner_upm8{animation-delay:-.8s}.spinner_2eL5{animation-delay:-.7s}.spinner_Rp9l{animation-delay:-.6s}.spinner_dy3W{animation-delay:-.5s}@keyframes spinner_B8Vq{0%,66.66%{animation-timing-function:cubic-bezier(0.36,.61,.3,.98);y:6px;height:12px}33.33%{animation-timing-function:cubic-bezier(0.36,.61,.3,.98);y:1px;height:22px}}</style><rect class="spinner_jCIR" x="1" y="6" width="2.8" height="12"/><rect class="spinner_jCIR spinner_upm8" x="5.8" y="6" width="2.8" height="12"/><rect class="spinner_jCIR spinner_2eL5" x="10.6" y="6" width="2.8" height="12"/><rect class="spinner_jCIR spinner_Rp9l" x="15.4" y="6" width="2.8" height="12"/><rect class="spinner_jCIR spinner_dy3W" x="20.2" y="6" width="2.8" height="12"/></svg>')
+  filter: invert(1) opacity(0.7)
+  vertical-align: middle
+  padding: 0 .5rem

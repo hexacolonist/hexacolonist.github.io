@@ -14,9 +14,18 @@ importers:
       '@vite-pwa/assets-generator':
         specifier: ^0.2.4
         version: 0.2.4
+      assemblyscript:
+        specifier: ^0.27.29
+        version: 0.27.29
+      binaryen:
+        specifier: 116.0.0-nightly.20240114
+        version: 116.0.0-nightly.20240114
       eslint:
         specifier: ^9.8.0
         version: 9.8.0
+      long:
+        specifier: 5.2.3
+        version: 5.2.3
       monaco-editor:
         specifier: ^0.50.0
         version: 0.50.0
@@ -1107,6 +1116,11 @@ packages:
     resolution: {integrity: sha512-bMxMKAjg13EBSVscxTaYA4mRc5t1UAXa2kXiGTNfZ079HIWXEkKmkgFrh/nJqamaLSrXO5H4WFFkPEaLJWbs3A==}
     engines: {node: '>= 0.4'}
 
+  assemblyscript@0.27.29:
+    resolution: {integrity: sha512-pH6udb7aE2F0t6cTh+0uCepmucykhMnAmm7k0kkAU3SY7LvpIngEBZWM6p5VCguu4EpmKGwEuZpZbEXzJ/frHQ==}
+    engines: {node: '>=16', npm: '>=7'}
+    hasBin: true
+
   async@3.2.5:
     resolution: {integrity: sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==}
 
@@ -1160,6 +1174,10 @@ packages:
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
+
+  binaryen@116.0.0-nightly.20240114:
+    resolution: {integrity: sha512-0GZrojJnuhoe+hiwji7QFaL3tBlJoA+KFUN7ouYSDGZLSo9CKM8swQX8n/UcbR0d1VuZKU+nhogNzv423JEu5A==}
+    hasBin: true
 
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
@@ -1846,6 +1864,9 @@ packages:
 
   lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+
+  long@5.2.3:
+    resolution: {integrity: sha512-lcHwpNoggQTObv5apGNCTdJrO69eHOZMi4BNC+rTLER8iHAqGrUVeLh/irVIM7zTw2bOXA8T6uNPeujwOLg/2Q==}
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
@@ -3903,6 +3924,11 @@ snapshots:
       is-array-buffer: 3.0.4
       is-shared-array-buffer: 1.0.3
 
+  assemblyscript@0.27.29:
+    dependencies:
+      binaryen: 116.0.0-nightly.20240114
+      long: 5.2.3
+
   async@3.2.5: {}
 
   at-least-node@1.0.0: {}
@@ -3965,6 +3991,8 @@ snapshots:
   base64-js@1.5.1: {}
 
   binary-extensions@2.3.0: {}
+
+  binaryen@116.0.0-nightly.20240114: {}
 
   bl@4.1.0:
     dependencies:
@@ -4715,6 +4743,8 @@ snapshots:
   lodash.sortby@4.7.0: {}
 
   lodash@4.17.21: {}
+
+  long@5.2.3: {}
 
   lru-cache@5.1.1:
     dependencies:
