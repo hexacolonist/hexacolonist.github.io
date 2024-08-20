@@ -1,45 +1,14 @@
 import { defineConfig } from 'vite'
 import glsl from 'vite-plugin-glsl'
-import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
-export default defineConfig((env) => ({
+export default defineConfig({
   plugins: [
     glsl({
       compress: true
     }),
-    viteStaticCopy({
-      targets: [
-        {
-          src: [
-            'node_modules/monaco-editor/min',
-            ...(env.command === 'serve' ? ['node_modules/monaco-editor/min-maps'] : [])
-          ],
-          dest: 'editor'
-        },
-        {
-          src: ['node_modules/assemblyscript/dist/asc.js', 'node_modules/assemblyscript/dist/assemblyscript.js'],
-          dest: 'asc'
-        },
-        {
-          src: 'node_modules/binaryen/index.js',
-          rename: 'binaryen.js',
-          dest: 'asc'
-        },
-        {
-          src: 'node_modules/long/index.js',
-          rename: 'long.js',
-          dest: 'asc'
-        }
-      ]
-    }),
     VitePWA({
-      registerType: 'prompt',
-      injectRegister: false,
-
-      pwaAssets: {},
-
       manifest: {
         id: 'io.github.hexacolonist',
         short_name: 'Hexacolonist',
@@ -66,14 +35,30 @@ export default defineConfig((env) => ({
         ]
       },
 
+      injectRegister: false,
+      pwaAssets: {},
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2,ttf}'],
-        globIgnores: ['**/vs/language/**'],
-        maximumFileSizeToCacheInBytes: 12 * 1024 * 1024,
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
-        clientsClaim: true
+        clientsClaim: true,
+        runtimeCaching: [
+          {
+            handler: 'CacheFirst',
+            urlPattern: /^https:\/\/cdn\.jsdelivr\.net/,
+            options: {
+              fetchOptions: {
+                mode: 'cors',
+                credentials: 'same-origin'
+              },
+              cacheName: 'workbox-runtime-cdn',
+              expiration: {
+                purgeOnQuotaError: true
+              }
+            }
+          }
+        ]
       },
-
       devOptions: {
         enabled: false,
         navigateFallback: 'index.html',
@@ -82,4 +67,4 @@ export default defineConfig((env) => ({
       }
     })
   ]
-}))
+})

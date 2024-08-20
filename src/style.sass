@@ -1,10 +1,14 @@
+$bg-grey: #252526
+$bg-dark: #1e1e1e
+$border-grey: #8885
+
 :root
   font-family: neuropol-x, Trebuchet MS, Calibri, sans-serif
   line-height: 1.5
   font-weight: 400
 
   color-scheme: light dark
-  color: rgba(255, 255, 255, 0.9)
+  color: #ebebeb
   background-color: #333333
 
   font-synthesis: none
@@ -42,8 +46,8 @@ body
 
 #resize-handle
   width: 2px
-  border-right: 2px solid #1e1e1e
-  background-color: #252526
+  border-right: 2px solid $bg-dark
+  background-color: $bg-grey
   cursor: ew-resize
 
 #editor
@@ -62,7 +66,7 @@ body
     display: block
   .toolbar
     & > div
-      background-color: #252526
+      background-color: $bg-grey
     &:last-child
       display: none
   .container
@@ -74,11 +78,12 @@ h1
 
 #loading
   position: absolute
-  z-index: 2
+  z-index: 1
   top: 0
   left: 0
-  right: 0
+  right: 4px // resize-handle width
   bottom: 0
+  pointer-events: none
 
   display: flex
   justify-content: center
@@ -127,19 +132,21 @@ button
   bottom: 0
   margin: 16px
   padding: 12px
-  border: 1px solid #8885
+  background-color: $bg-grey
+  border: 1px solid $border-grey
   border-radius: 4px
+  box-shadow: 3px 4px 5px 0 $border-grey
   z-index: 1
   text-align: left
-  box-shadow: 3px 4px 5px 0 #8885
   display: grid
 
   .message
     margin-bottom: 8px
   .buttons
     display: flex
+    flex-direction: row-reverse
   button
-    border: 1px solid #8885
+    border: 1px solid $border-grey
     outline: none
     margin-right: 5px
     border-radius: 2px

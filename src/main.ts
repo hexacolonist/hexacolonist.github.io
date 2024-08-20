@@ -13,19 +13,6 @@ enum Angle {
   DownRight = (Math.PI * 11) / 6
 }
 
-const ANGLE_KEYS: Partial<Record<string, Angle>> = {
-  ArrowRight: Angle.Right,
-  ArrowUp: Angle.Up,
-  ArrowDown: Angle.Down,
-  ArrowLeft: Angle.Left,
-  KeyE: Angle.UpRight,
-  KeyW: Angle.Up,
-  KeyQ: Angle.UpLeft,
-  KeyA: Angle.DownLeft,
-  KeyS: Angle.Down,
-  KeyD: Angle.DownRight
-}
-
 setTimeout(() => {
   const view: RenderState = {
     x: 0,
@@ -42,6 +29,28 @@ setTimeout(() => {
     ],
     running: true
   }
+  registerCanvas(view)
+
+  registerEditor()
+
+  const loading = document.getElementById('loading')!
+  loading.classList.add('hiding')
+  setTimeout(() => loading.remove(), 5000)
+})
+
+const ANGLE_KEYS: Partial<Record<string, Angle>> = {
+  ArrowRight: Angle.Right,
+  ArrowUp: Angle.Up,
+  ArrowDown: Angle.Down,
+  ArrowLeft: Angle.Left,
+  KeyE: Angle.UpRight,
+  KeyW: Angle.Up,
+  KeyQ: Angle.UpLeft,
+  KeyA: Angle.DownLeft,
+  KeyS: Angle.Down,
+  KeyD: Angle.DownRight
+}
+function registerCanvas(view: RenderState) {
   /** pixel / ms */
   const speed = 0.5
   const keyCodesDown = new Set<string>()
@@ -91,20 +100,27 @@ setTimeout(() => {
 
     view.angle += e.deltaX * speed * 0.001
   })
+}
+
+function registerEditor() {
+  let getEditor = () => {
+    const editor = document.getElementById('editor')!
+    getEditor = () => editor
+    editor.classList.add('loading')
+    edit(editor)
+      .catch((err) => {
+        console.error('Failed to load editor', err)
+        editor.innerText = 'Failed to load editor'
+      })
+      .finally(() => editor.classList.remove('loading'))
+    return null as HTMLElement | null
+  }
 
   const editorHandle = document.getElementById('resize-handle')!
-  const editor = document.getElementById('editor')!
-  let editing = false
   editorHandle.addEventListener('mousedown', (e) => {
     e.preventDefault()
-    if (!editing) {
-      editing = true
-      editor.classList.add('loading')
-      edit(editor)
-        .catch(console.error)
-        .finally(() => editor.classList.remove('loading'))
-      return
-    }
+    const editor = getEditor()
+    if (!editor) return
     const offset = editor.offsetWidth + e.clientX
     const onMouseMove = (e: MouseEvent) => {
       let width = offset - e.clientX
@@ -119,12 +135,9 @@ setTimeout(() => {
     document.addEventListener('mouseup', onMouseUp)
   })
   editorHandle.addEventListener('dblclick', () => {
-    editor.style.width = editor.style.width === '0px' ? '50%' : '0px'
+    const editor = getEditor()
+    if (editor) editor.style.width = editor.style.width === '0px' ? '50%' : '0px'
   })
-
-  const loading = document.getElementById('loading')!
-  loading.classList.add('hiding')
-  setTimeout(() => loading.remove(), 5000)
-})
+}
 
 initPWA()

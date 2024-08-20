@@ -1,9 +1,8 @@
-import loader from '@monaco-editor/loader'
+import { fetchMonaco } from './monaco'
 import { getAssemblyScript } from '../compiler/assemblyscript'
 
 export default async function mountEditor(on: HTMLElement) {
-  loader.config({ paths: { vs: 'editor/min/vs' } })
-  const [monaco, { wat, templates }] = await Promise.all([loader.init(), import('./data')])
+  const [monaco, { wat, templates }] = await Promise.all([fetchMonaco(), import('./data')])
 
   monaco.languages.register({ id: 'wat' })
   monaco.languages.setLanguageConfiguration('wat', wat.config as never)
