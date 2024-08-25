@@ -1,4 +1,5 @@
 import { version } from 'monaco-editor/package.json'
+export type * from 'monaco-editor'
 type monaco = typeof import('monaco-editor')
 
 const CDN = 'https://cdn.jsdelivr.net/npm'

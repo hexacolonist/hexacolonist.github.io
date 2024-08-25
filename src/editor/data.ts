@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
-export const templates = {
-  typescript: `import { io, motor } from "./api"
+export const templates: Partial<Record<string, string>> = {
+  typescript: `import { io, motor } from "@hexacolonist/bot"
 
 /// Called at boot-time (optional)
 export function _start(): void {
@@ -57,9 +57,17 @@ extern "C" void _start() {
 /// Called at each tick (required)
 extern "C" void tick() {
   motor::forward();
-}`,
-  wasm: 'Drag and drop your WebAssembly file'
+}`
 }
+
+export const ascLib = `
+export const io = {
+  log: (message: string) => { }
+}
+export const motor = {
+  forward: () => { }
+}
+`
 
 /** 'WebAssembly Text Format' Monarch language */
 export const wat = {
