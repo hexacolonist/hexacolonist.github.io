@@ -1,18 +1,24 @@
 {
   "name": "hexacolonist",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bot programming game",
   "type": "module",
+  "bin": "serve.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "start": "run-s build preview",
     "test": "run-p test:*",
     "test:ts": "tsc",
     "format": "prettier -w .",
     "test:format": "prettier -c .",
     "lint": "eslint . --fix",
-    "test:lint": "eslint ."
+    "test:lint": "eslint .",
+    "prepack": "run-s test build"
   },
   "devDependencies": {
     "@vite-pwa/assets-generator": "^0.2.4",
